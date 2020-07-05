@@ -10,17 +10,23 @@ router.get('/sing-in', (req, res)=> {
     return res.json('sing-in');
 });
 
-router.get('/sing-up', async (req, res)=> {
+router.post('/sing-up', async (req, res)=> {
 
-    const email = 'renan@gmail.com'; 
-    const password =  '123456';
+    const { email, password } = req.body;
+
+    const account =  await Account.findOne( { where: {email} });
+
+    if (account) return res.json('Conta já existe');
+
+    /* const email = 'renan@gmail.com'; 
+    const password =  '123456'; */
 
     const hash = bcrypt.hashSync(password, saltRound)
 
-    const result = await Account.create( { email, password: hash} );
+    const newAccount = await Account.create( { email, password: hash} );
     
-    console.log(result)
-    return res.json(result);
+    //console.log( { email, password })
+    return res.json(newAccount);
 });
 
 module.exports = router;

@@ -5,6 +5,9 @@ const app = express();
 
 const authController = require('./controllers/auth');
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }))
+
 // /auth/sing-in
 // /auth/sing-up
 
