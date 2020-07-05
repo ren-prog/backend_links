@@ -16,7 +16,7 @@ router.post('/sing-up', async (req, res)=> {
 
     const account =  await Account.findOne( { where: {email} });
 
-    if (account) return res.json('Conta já existe');
+    if (account) return res.json('Account already exists');
 
     /* const email = 'renan@gmail.com'; 
     const password =  '123456'; */
@@ -26,7 +26,7 @@ router.post('/sing-up', async (req, res)=> {
     const newAccount = await Account.create( { email, password: hash} );
     
     //console.log( { email, password })
-    return res.json(newAccount);
+    return res.jsonOK(newAccount, 'Teste Conta json ok');
 });
 
 module.exports = router;
