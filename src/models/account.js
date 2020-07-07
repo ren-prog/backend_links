@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
         },
     });
 
+    Account.associate = (models)=> {
+        Account.hasMany(models.Link, { foreignKey: 'accountId'});
+    }
     // Não pode ser arrow functions
     // se usar, o this será referente a essa função enão ao Account
     Account.prototype.ToJSON = function(){
