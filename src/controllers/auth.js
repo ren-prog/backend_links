@@ -1,17 +1,32 @@
 const express  = require('express');
 const { Account } = require('../models');
 const bcrypt = require('bcrypt');
-const { accountSingUp } = require('../validators/account');
+const { accountSingUp, accountSingIn } = require('../validators/account');
 const { getMessages } = require('../helpers/validator');
+
+const { generateJwt, generateRefreshJwt} = require('../helpers/jwt');
 
 const router = express.Router();
 
 const saltRound = 10;
 
-router.get('/sing-in', (req, res)=> {
-    return res.json('sing-in');
+// Login
+router.post('/sing-in', accountSingIn, async (req, res)=> {
+
+    const { email, password } = req.body;
+
+    const account = await Account.findOne({where: { email } });
+
+    const match = account ? bcrypt.compareSync(password, account.password ) : null;
+    if(!match) return res.jsonBadRequest(null, getMessages('account.singin.invalid'));
+
+    const token = generateJwt({id: account.id});
+    const refreshToken = generateRefreshJwt({id: account.id});
+
+    return res.json(account, null, { token, refreshToken } );
 });
 
+// Cadastro
 router.post('/sing-up', accountSingUp,  async (req, res)=> {
 
     const { email, password } = req.body;
@@ -27,6 +42,11 @@ router.post('/sing-up', accountSingUp,  async (req, res)=> {
 
     const newAccount = await Account.create( { email, password: hash} );
     
+    const token = generateJwt({id: newAccount.id});
+    const refreshToken = generateRefreshJwt({id: newAccount.id});
+
+
+
     //console.log( { email, password })
     return res.jsonOK(newAccount, getMessages('Account.signup.sucesse'));
 });
