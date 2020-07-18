@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const { accountSingUp, accountSingIn } = require('../validators/account');
 const { getMessages } = require('../helpers/validator');
 
-const { generateJwt, generateRefreshJwt} = require('../helpers/jwt');
+const { generateJwt, generateRefreshJwt, verifyRefreshToken, getTokenFromHeaders} = require('../helpers/jwt');
 
 const router = express.Router();
 
@@ -51,4 +51,30 @@ router.post('/sing-up', accountSingUp,  async (req, res)=> {
     return res.jsonOK(newAccount, getMessages('Account.signup.sucesse'), { token, refreshToken});
 });
 
+router.post('/refresh', async(req, res) => {
+    const token = getTokenFromHeaders(req.headers) 
+
+    if(!token) res.jsonUnauthorized(null, 'Invalid Token');
+
+    try {
+        const decoded  = verifyRefreshToken(token);
+
+        const account = await Account.findByPk(decoded.id);
+
+        if (!account) return res.jsonUnauthorized(null, 'Invalid Token');
+
+        if (decoded.version != account.jwtVersion){
+            return res.jsonUnauthorized(null, 'Invalid Token');
+        }
+
+        const meta = {
+            token: generateJwt( { id: account.id } ),
+        };
+
+        return res.jsonOK(null, null, meta);
+
+    } catch (error) {
+        return res.jsonUnauthorized(null, 'Invalid Token');
+    }
+})
 module.exports = router;

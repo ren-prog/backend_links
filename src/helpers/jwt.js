@@ -22,6 +22,14 @@ const verifyRefreshToken = (token) => {
     return jwt.verify(token, refreshTokenPrivateKey)
 }
 
+const getTokenFromHeaders = (headers) => {
+
+    const token = req.headers['authorization'];
+    return token = token ? token.slice(7, token.lenght) : null;
+
+    //if(!token) res.jsonUnauthorized(null, 'Invalid Token');
+
+}
 
 
-module.exports = { generateJwt,  verifyToken, generateRefreshJwt, verifyRefreshToken};
+module.exports = { generateJwt,  verifyToken, generateRefreshJwt, verifyRefreshToken, getTokenFromHeaders};
