@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-require('dtoenv').config();
+require('dotenv').config();
 
 const tokenPrivateKey = process.env.JWT_TOKEN_PRIVATE_KEY;
 const refreshTokenPrivateKey = process.env.JWT_REFRESH_TOKEN_PRIVATE_KEY;

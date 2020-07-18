@@ -3,12 +3,14 @@ const db = require('./models')
 const response = require('./middlewares/response');
 const authController = require('./controllers/auth');
 const linkController = require('./controllers/link');
+const checkJwt = require('./middlewares/jwt');
 
 const app = express();
 
 app.use(response);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }))
+app.use(checkJwt)
 
 // /auth/sing-in
 // /auth/sing-up

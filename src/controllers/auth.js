@@ -21,7 +21,7 @@ router.post('/sing-in', accountSingIn, async (req, res)=> {
     if(!match) return res.jsonBadRequest(null, getMessages('account.singin.invalid'));
 
     const token = generateJwt({id: account.id});
-    const refreshToken = generateRefreshJwt({id: account.id});
+    const refreshToken = generateRefreshJwt({ id: account.id, version: Account.jwtVersion });
 
     return res.json(account, null, { token, refreshToken } );
 });
@@ -43,12 +43,12 @@ router.post('/sing-up', accountSingUp,  async (req, res)=> {
     const newAccount = await Account.create( { email, password: hash} );
     
     const token = generateJwt({id: newAccount.id});
-    const refreshToken = generateRefreshJwt({id: newAccount.id});
+    const refreshToken = generateRefreshJwt({id: newAccount.id, version: newAccount.jwtVersion});
 
 
 
     //console.log( { email, password })
-    return res.jsonOK(newAccount, getMessages('Account.signup.sucesse'));
+    return res.jsonOK(newAccount, getMessages('Account.signup.sucesse'), { token, refreshToken});
 });
 
 module.exports = router;

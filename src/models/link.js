@@ -1,5 +1,3 @@
-const { DataTypes } = require("sequelize/types");
-
 module.exports = (sequelize, DataTypes) => {
 
     const Link = sequelize.define('Link', {
@@ -24,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Link.associate = (models)=> {
-        Link.belongs(models.Account, { foreignKey: 'accountId'});
+        Link.belongsTo(models.Account, { foreignKey: 'accountId'});
     }
     
     return Link;
